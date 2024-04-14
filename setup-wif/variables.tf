@@ -8,11 +8,6 @@ variable "tfc_organization_name" {
   description = "Name of the Terraform Cloud organization"
 }
 
-variable "tfc_organization_id" {
-  type        = string
-  description = "ID of the Terraform Cloud organization"
-}
-
 variable "google_project_id" {
   type        = string
   description = "ID of the Google Cloud project"
