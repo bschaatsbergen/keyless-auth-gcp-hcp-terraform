@@ -8,18 +8,18 @@ locals {
 }
 
 # create a workload identity pool for Terraform Cloud
-resource "google_iam_workload_identity_pool" "tf_cloud" {
+resource "google_iam_workload_identity_pool" "tfc" {
   project                   = local.google_project_id
-  workload_identity_pool_id = "tf-cloud-pool"
+  workload_identity_pool_id = "tfc-pool"
   display_name              = "Terraform Cloud Pool"
   description               = "Used to authenticate to Google Cloud"
 }
 
 # create a workload identity pool provider for Terraform Cloud
-resource "google_iam_workload_identity_pool_provider" "tf_cloud" {
+resource "google_iam_workload_identity_pool_provider" "tfc" {
   project                            = local.google_project_id
-  workload_identity_pool_id          = google_iam_workload_identity_pool.tf_cloud.workload_identity_pool_id
-  workload_identity_pool_provider_id = "tf-cloud-provider"
+  workload_identity_pool_id          = google_iam_workload_identity_pool.tfc.workload_identity_pool_id
+  workload_identity_pool_provider_id = "tfc-provider"
   display_name                       = "Terraform Cloud Provider"
   description                        = "Used to authenticate to Google Cloud"
   attribute_condition                = "assertion.terraform_organization_name==\"${local.tfc_organization_name}\""
@@ -45,7 +45,7 @@ resource "google_service_account_iam_member" "example_workload_identity_user" {
   for_each           = toset(local.tfc_workspace_ids)
   service_account_id = google_service_account.example.name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.tf_cloud.name}/attribute.terraform_workspace_id/${each.value}"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.tfc.name}/attribute.terraform_workspace_id/${each.value}"
 }
 
 # this is how the 'example' service account gets its permissions/roles
@@ -80,7 +80,7 @@ resource "tfe_variable" "example_service_account_email" {
 resource "tfe_variable" "example_provider_name" {
   sensitive       = true
   key             = "TFC_GCP_WORKLOAD_PROVIDER_NAME"
-  value           = google_iam_workload_identity_pool_provider.tf_cloud.name
+  value           = google_iam_workload_identity_pool_provider.tfc.name
   category        = "env"
   variable_set_id = tfe_variable_set.example.id
 }
