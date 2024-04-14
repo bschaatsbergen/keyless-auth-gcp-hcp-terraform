@@ -1,4 +1,6 @@
 locals {
+  google_project_id     = "example-project"
+  tfc_organization_name = "example-org"
   # list of Terraform Cloud workspace IDs where the Workload Identity Federation configuration can be accessed
   terraform_cloud_workspace_ids = [
     "ws-ZZZZZZZZZZZZZZZ",
@@ -7,7 +9,7 @@ locals {
 
 # create a workload identity pool for Terraform Cloud
 resource "google_iam_workload_identity_pool" "tf_cloud" {
-  project                   = var.google_project_id
+  project                   = local.google_project_id
   workload_identity_pool_id = "tf-cloud-pool"
   display_name              = "Terraform Cloud Pool"
   description               = "Used to authenticate to Google Cloud"
@@ -15,12 +17,12 @@ resource "google_iam_workload_identity_pool" "tf_cloud" {
 
 # create a workload identity pool provider for Terraform Cloud
 resource "google_iam_workload_identity_pool_provider" "tf_cloud" {
-  project                            = var.google_project_id
+  project                            = local.google_project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.tf_cloud.workload_identity_pool_id
   workload_identity_pool_provider_id = "tf-cloud-provider"
   display_name                       = "Terraform Cloud Provider"
   description                        = "Used to authenticate to Google Cloud"
-  attribute_condition                = "assertion.terraform_organization_name==\"${var.tfc_organization_name}\""
+  attribute_condition                = "assertion.terraform_organization_name==\"${local.tfc_organization_name}\""
   attribute_mapping = {
     "google.subject"                     = "assertion.sub"
     "attribute.terraform_workspace_id"   = "assertion.terraform_workspace_id"
@@ -33,7 +35,7 @@ resource "google_iam_workload_identity_pool_provider" "tf_cloud" {
 
 # example service account that Terraform Cloud will impersonate
 resource "google_service_account" "example" {
-  project      = var.google_project_id
+  project      = local.google_project_id
   account_id   = "example"
   display_name = "Service Account for Terraform Cloud"
 }
@@ -48,7 +50,7 @@ resource "google_service_account_iam_member" "example_workload_identity_user" {
 
 # this is how the 'example' service account gets its permissions/roles
 resource "google_project_iam_member" "example_storage_admin" {
-  project = var.google_project_id
+  project = local.google_project_id
   role    = "roles/storage.admin"
   member  = "serviceAccount:${google_service_account.example.email}"
 }
@@ -57,7 +59,7 @@ resource "google_project_iam_member" "example_storage_admin" {
 resource "tfe_variable_set" "example" {
   name         = google_service_account.example.account_id
   description  = "Workload Identity Federation configuration for ${google_service_account.example.name}"
-  organization = var.tfc_organization_name
+  organization = local.tfc_organization_name
 }
 
 resource "tfe_variable" "example_provider_auth" {
