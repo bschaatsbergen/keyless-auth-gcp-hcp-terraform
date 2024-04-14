@@ -10,7 +10,7 @@ resource "google_iam_workload_identity_pool" "tf_cloud" {
   project                   = var.google_project_id
   workload_identity_pool_id = "tf-cloud-pool"
   display_name              = "Terraform Cloud Pool"
-  description               = "Pool Terraform Cloud, used to authenticate to Google Cloud"
+  description               = "Used to authenticate to Google Cloud"
 }
 
 # create a workload identity pool provider for Terraform Cloud
@@ -19,8 +19,8 @@ resource "google_iam_workload_identity_pool_provider" "tf_cloud" {
   workload_identity_pool_id          = google_iam_workload_identity_pool.tf_cloud.workload_identity_pool_id
   workload_identity_pool_provider_id = "tf-cloud-provider"
   display_name                       = "Terraform Cloud Provider"
-  description                        = "Provider for Terraform Cloud, used to authenticate to Google Cloud"
-  attribute_condition                = "assertion.terraform_organization_id==\"${var.tfc_organization_name}\""
+  description                        = "Used to authenticate to Google Cloud"
+  attribute_condition                = "assertion.terraform_organization_name==\"${var.tfc_organization_name}\""
   attribute_mapping = {
     "google.subject"                     = "assertion.sub"
     "attribute.terraform_workspace_id"   = "assertion.terraform_workspace_id"
