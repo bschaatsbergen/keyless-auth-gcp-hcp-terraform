@@ -1,11 +1,9 @@
-# Keyless Authentication Between Terraform Cloud & Google Cloud
+# Keyless Google Cloud Access from Terraform Cloud
 
-Securely connect to a Google Kubernetes Engine (GKE) Cluster using Terraform, SSH, and Identity-Aware Proxy.
+This configuration enables secure access to Google Cloud from Terraform Cloud without the use of service account keys. It uses Workload Identity Federation, a Google Cloud service that uses OpenID Connect for authentication.
 
-## Features
+# What's included:
 
-This configuration provides ready-to-use resources for production:
-
-- Workload Identity Federation for Terraform Cloud.
-- An example Service Account which Terraform Cloud can use to authenticate with Google Cloud.
-- A Terraform Cloud Variable Set containing sensitive information about the example Service Account.
+* Workload Identity Federation: Establishes trust between Terraform Cloud and Google Cloud.
+* Example Service Account: Used by Terraform Cloud to authenticate with Google Cloud.
+* Terraform Cloud Variable Set: Stores sensitive information about the example service account.
