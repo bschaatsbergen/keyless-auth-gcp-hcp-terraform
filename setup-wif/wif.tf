@@ -2,7 +2,7 @@ locals {
   google_project_id     = "example-project"
   tfc_organization_name = "example-org"
   # list of Terraform Cloud workspace IDs where the Workload Identity Federation configuration can be accessed
-  terraform_cloud_workspace_ids = [
+  tfc_workspace_ids = [
     "ws-ZZZZZZZZZZZZZZZ",
   ]
 }
@@ -42,7 +42,7 @@ resource "google_service_account" "example" {
 
 # IAM should verify the Terraform Cloud Workspace ID before authorizing access to impersonate the 'example' service account
 resource "google_service_account_iam_member" "example_workload_identity_user" {
-  for_each           = toset(local.terraform_cloud_workspace_ids)
+  for_each           = toset(local.tfc_workspace_ids)
   service_account_id = google_service_account.example.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.tf_cloud.name}/attribute.terraform_workspace_id/${each.value}"
@@ -87,7 +87,7 @@ resource "tfe_variable" "example_provider_name" {
 
 # share the variable set with a Terraform Cloud workspace
 resource "tfe_workspace_variable_set" "example" {
-  for_each        = toset(local.terraform_cloud_workspace_ids)
+  for_each        = toset(local.tfc_workspace_ids)
   variable_set_id = tfe_variable_set.example.id
   workspace_id    = each.value
 }
