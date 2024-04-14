@@ -3,9 +3,14 @@ variable "tfc_token" {
   description = "Token for Terraform Cloud"
 }
 
-variable "tfc_organization" {
+variable "tfc_organization_name" {
   type        = string
   description = "Name of the Terraform Cloud organization"
+}
+
+variable "tfc_organization_id" {
+  type        = string
+  description = "ID of the Terraform Cloud organization"
 }
 
 variable "google_project_id" {

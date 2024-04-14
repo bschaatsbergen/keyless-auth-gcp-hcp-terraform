@@ -20,7 +20,7 @@ resource "google_iam_workload_identity_pool_provider" "tf_cloud" {
   workload_identity_pool_provider_id = "tf-cloud-provider"
   display_name                       = "Terraform Cloud Provider"
   description                        = "Provider for Terraform Cloud, used to authenticate to Google Cloud"
-  #attribute_condition                = "assertion.terraform_organization_id==\"${var.tfc_organization}\""
+  attribute_condition                = "assertion.terraform_organization_id==\"${var.tfc_organization_id}\""
   attribute_mapping = {
     "google.subject"                     = "assertion.sub"
     "attribute.terraform_workspace_id"   = "assertion.terraform_workspace_id"
@@ -57,7 +57,7 @@ resource "google_project_iam_member" "example_storage_admin" {
 resource "tfe_variable_set" "example" {
   name         = google_service_account.example.account_id
   description  = "Workload Identity Federation configuration for ${google_service_account.example.name}"
-  organization = var.tfc_organization
+  organization = var.tfc_organization_name
 }
 
 resource "tfe_variable" "example_provider_auth" {
