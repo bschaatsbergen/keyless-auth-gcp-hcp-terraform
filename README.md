@@ -1,9 +1,9 @@
-# Keyless Google Cloud Access from Terraform Cloud
+# Keyless Google Cloud Access from HCP Terraform
 
-This configuration enables secure access to Google Cloud from Terraform Cloud without the use of service account keys. It uses Workload Identity Federation, a Google Cloud service that uses OpenID Connect for authentication.
+Securely access Google Cloud from HCP Terraform using Google's Workload Identity Federation, eliminating the need for storing service account keys.
 
-# Features:
+## What is identity federation?
+Identity federation lets HCP Terraform impersonate a service account through its native OpenID Connect integration and obtain a short-lived OAuth 2.0 access token. This short-lived access token lets you call any Google Cloud APIs that the service account has access to at runtime, making your HCP Terraform runs much more secure.
 
-* Workload Identity Federation: Establishes trust between Terraform Cloud and Google Cloud.
-* Example Service Account: Used by Terraform Cloud to authenticate with Google Cloud.
-* Terraform Cloud Variable Set: Stores sensitive information about the example service account.
+## Using Workload Identity Federation
+Using HashiCorp Terraform, you have the ability to create a Workload Identity [Pool](https://cloud.google.com/iam/docs/workload-identity-federation#pools) and [Provider](https://cloud.google.com/iam/docs/workload-identity-federation#providers), which HCP Terraform uses to request a federated token from. This token is then passed to the Google Terraform provider, which impersonates a service account to obtain temporary credentials to plan or apply Terraform with.
